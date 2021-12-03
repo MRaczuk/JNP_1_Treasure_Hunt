@@ -4,8 +4,7 @@
 #include "bits/stdc++.h"
 using namespace std;
 
-template<typename ValueType, bool IsTrapped>
-requires integral<ValueType>
+template<integral ValueType, bool IsTrapped>
 class Treasure {
 
 private:
@@ -14,23 +13,29 @@ private:
 public:
     bool isTrapped = IsTrapped;
     constexpr Treasure (ValueType value);
-    constexpr ValueType evaluate();
+    constexpr ValueType evaluate() const;
     constexpr ValueType getLoot();
 };
 
-template <typename ValueType, bool IsTrapped>
+template <integral ValueType, bool IsTrapped>
 constexpr Treasure<ValueType, IsTrapped> :: Treasure(ValueType value) : value(value){};
 
-template <typename ValueType, bool IsTrapped>
-constexpr ValueType Treasure<ValueType, IsTrapped> :: evaluate(){
+template <integral ValueType, bool IsTrapped>
+constexpr ValueType Treasure<ValueType, IsTrapped> :: evaluate() const {
     return value;
 }
 
-template <typename ValueType, bool IsTrapped>
-constexpr ValueType Treasure<ValueType, IsTrapped> :: getLoot(){
+template <integral ValueType, bool IsTrapped>
+constexpr ValueType Treasure<ValueType, IsTrapped> :: getLoot() {
     ValueType out = this->value;
     this->value = 0;
     return out;
 }
+
+template<integral ValueType>
+using SafeTreasure = Treasure<ValueType, false>;
+
+template<integral ValueType>
+using TrappedTreasure = Treasure<ValueType, true>;
 
 #endif // TREASURE_H

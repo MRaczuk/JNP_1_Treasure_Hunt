@@ -7,17 +7,16 @@
 
 using namespace std;
 
-template<typename ValueType, bool IsArmed>
-requires integral<ValueType>
-Adventurer<ValueType, IsArmed>{
+template<integral ValueType, bool IsArmed>
+Adventurer<ValueType, IsArmed> {
 
 public:
     bool isArmed = IsArmed;
 };
 
-template<typename ValueType, size_t CompletedExpeditions>
-requires integral<ValueType> && CompletedExpeditions < MAX_EXPEDITIONS
-Veteran<ValueType, CompletedExpeditions>{
+template<integral ValueType, size_t CompletedExpeditions>
+requires (CompletedExpeditions < MAX_EXPEDITIONS)
+Veteran<ValueType, CompletedExpeditions> {
 
 };
 
