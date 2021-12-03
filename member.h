@@ -8,7 +8,7 @@
 using namespace std;
 
 template<integral ValueType, bool IsArmed>
-Adventurer<ValueType, IsArmed> {
+class Adventurer {
 
 public:
     bool isArmed = IsArmed;
@@ -16,7 +16,7 @@ public:
 
 template<integral ValueType, size_t CompletedExpeditions>
 requires (CompletedExpeditions < MAX_EXPEDITIONS)
-Veteran<ValueType, CompletedExpeditions> {
+class Veteran {
 
 };
 
