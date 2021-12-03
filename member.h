@@ -71,13 +71,44 @@ public:
 };
 
 template<integral ValueType, size_t CompletedExpeditions>
-requires (completedExpeditions < MAX_EXPEDITIONS)
+requires (CompletedExpeditions < MAX_EXPEDITIONS)
 class Veteran {
 private:
   ValueType looted = 0;
+  constexpr uint32_t Fib(size_t n) const{
+      if (n <= 1) return n;
+      int a = 0, b = 1;
+      for (int i = 0; i < n; i++){
+          a += b;
+          swap(a, b);
+      }
+      return a;
+  }
+  uint32_t strength = Fib(CompletedExpeditions);
+
 public:
   static constexpr const bool isArmed = true;
+  constexpr Veteran<ValueType, CompletedExpeditions>() {};
 
+  template<integral TreasureValueType, bool isTrapped>
+  constexpr void loot(Treasure<TreasureValueType, isTrapped>&& treasure) {
+      if constexpr (isTrapped) {
+          if (strength > 0) looted += treasure.getLoot();
+      }
+      else {
+          looted += treasure.getLoot();
+      }
+  }
+
+  constexpr ValueType getStrength() const {
+      return strength;
+  }
+
+  constexpr ValueType pay() {
+      ValueType tmp = looted;
+      looted = 0;
+      return tmp;
+  }
 };
 
 #endif // MEMBER_H

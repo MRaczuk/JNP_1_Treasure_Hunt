@@ -9,9 +9,10 @@ class Treasure {
 
 private:
     ValueType value;
+    bool isTrapped_ = IsTrapped;
 
 public:
-    bool isTrapped = IsTrapped;
+    const bool& isTrapped = isTrapped_;
     constexpr Treasure (ValueType value);
     constexpr ValueType evaluate() const;
     constexpr ValueType getLoot();
