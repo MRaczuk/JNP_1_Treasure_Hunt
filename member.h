@@ -85,12 +85,12 @@ public:
 private:
   ValueType looted = 0;
   static constexpr strength_t Fib(size_t n) {
-      int a = 0, b = 1;
-      for (int i = 0; i < n; i++){
-          a += b;
-          swap(a, b);
-      }
-      return a;
+    int a = 0, b = 1;
+    for (size_t i = 0; i < n; i++){
+      a += b;
+      swap(a, b);
+    }
+    return a;
   }
   
   strength_t strength = Fib(CompletedExpeditions);
