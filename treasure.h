@@ -1,78 +1,52 @@
 #ifndef TREASURE_H
 #define TREASURE_H
 
-#include "bits/stdc++.h"
-
-template<integral ValueType, bool IsTrapped>
-class Treasure {
-private:
-    ValueType value;
-#ifndef TREASURE_H
-#define TREASURE_H
-
 #include <concepts>
 
 template<std::integral ValueType, bool IsTrapped>
-class Treasure {
+class Treasure;
+
+template<std::integral ValueType>
+class Treasure<ValueType, true> {
 private:
     ValueType value;
 
 public:
-    const bool isTrapped;
-    constexpr Treasure (ValueType value);
-    constexpr ValueType evaluate() const;
-    constexpr ValueType getLoot();
+    static const bool isTrapped = true;
+    constexpr Treasure (ValueType value) : value(value) {}
+    constexpr ValueType evaluate() const {
+        return value;
+    }
+    constexpr ValueType getLoot(){
+        ValueType out = this->value;
+        this->value = 0;
+        return out;
+    }
 };
 
-template <std::integral ValueType, bool IsTrapped>
-constexpr Treasure<ValueType, IsTrapped> :: Treasure(ValueType value) : value(value), isTrapped(IsTrapped) {};
-
-template <std::integral ValueType, bool IsTrapped>
-constexpr ValueType Treasure<ValueType, IsTrapped> :: evaluate() const {
-    return value;
-}
-
-template <std::integral ValueType, bool IsTrapped>
-constexpr ValueType Treasure<ValueType, IsTrapped> :: getLoot() {
-    ValueType out = this->value;
-    this->value = 0;
-    return out;
-}
-
 template<std::integral ValueType>
-using SafeTreasure = Treasure<ValueType, false>;
-
-template<std::integral ValueType>
-using TrappedTreasure = Treasure<ValueType, true>;
-
-#endif // TREASURE_H
+class Treasure<ValueType, false> {
+private:
+    ValueType value;
 
 public:
-    const bool isTrapped;
-    constexpr Treasure (ValueType value);
-    constexpr ValueType evaluate() const;
-    constexpr ValueType getLoot();
+    static const bool isTrapped = false;
+    constexpr Treasure (ValueType value) : value(value) {}
+    constexpr ValueType evaluate() const {
+        return value;
+    }
+    constexpr ValueType getLoot(){
+        ValueType out = this->value;
+        this->value = 0;
+        return out;
+    }
 };
 
-template <integral ValueType, bool IsTrapped>
-constexpr Treasure<ValueType, IsTrapped> :: Treasure(ValueType value) : value(value), isTrapped(IsTrapped) {};
 
-template <integral ValueType, bool IsTrapped>
-constexpr ValueType Treasure<ValueType, IsTrapped> :: evaluate() const {
-    return value;
-}
-
-template <integral ValueType, bool IsTrapped>
-constexpr ValueType Treasure<ValueType, IsTrapped> :: getLoot() {
-    ValueType out = this->value;
-    this->value = 0;
-    return out;
-}
-
-template<integral ValueType>
+template<std::integral ValueType>
 using SafeTreasure = Treasure<ValueType, false>;
 
-template<integral ValueType>
+template<std::integral ValueType>
 using TrappedTreasure = Treasure<ValueType, true>;
 
 #endif // TREASURE_H
