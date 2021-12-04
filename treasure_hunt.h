@@ -11,8 +11,15 @@ concept ValidTreasure = requires(T x) {
     { Treasure{x} } -> std::same_as<T>;
 };
 
+template <typename A>
+concept DefinesPay =
+        requires(A a) {
+            { a.pay() } -> integral;
+        };
+
+// concept DefinesLoot = ?
 template<typename T>
-concept ValidAdventurer = requires(T adventurer)
+concept ValidAdventurer = DefinesPay<T> && requires(T adventurer)
 {
   typename T::strength_t;
   { T::isArmed } -> std::convertible_to<bool>;
@@ -20,5 +27,23 @@ concept ValidAdventurer = requires(T adventurer)
 
 template<typename T>
 concept EncounterSide = ValidTreasure<T> || ValidAdventurer<T>;
+
+template<EncounterSide SideA, EncounterSide SideB>
+using Encounter = pair<SideA, SideB>;
+
+template<EncounterSide A, EncounterSide B>
+requires(ValidAdventurer<A> || ValidAdventurer<B>)
+void run (Encounter<A, B> encounter){
+    if constexpr (ValidAdventurer<A>){
+        if (ValidAdventurer<B>){
+            ;
+        }
+        if (ValidTreasure<B>){
+            encounter.first.loot(encounter.second);
+        }
+    }
+    encounter.second.loot(encounter.first);
+}
+
 
 #endif // TREASURE_HUNT_H
