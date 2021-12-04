@@ -35,14 +35,15 @@ template<EncounterSide A, EncounterSide B>
 requires(ValidAdventurer<A> || ValidAdventurer<B>)
 void run (Encounter<A, B> encounter){
     if constexpr (ValidAdventurer<A>){
-        if (ValidAdventurer<B>){
+        if constexpr (ValidAdventurer<B>){
             ;
         }
-        if (ValidTreasure<B>){
-            encounter.first.loot(encounter.second);
+        if constexpr (ValidTreasure<B>){
+            encounter.first.loot(std::move(encounter.second));
         }
     }
-    encounter.second.loot(encounter.first);
+    if constexpr (ValidAdventurer<B>)
+      encounter.second.loot(std::move(encounter.first));
 }
 
 
