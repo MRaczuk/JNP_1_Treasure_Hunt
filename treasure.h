@@ -10,17 +10,16 @@ class Treasure {
 
 private:
     ValueType value;
-    bool isTrapped_ = IsTrapped;
 
 public:
-    const bool& isTrapped = isTrapped_;
+    const bool isTrapped;
     constexpr Treasure (ValueType value);
     constexpr ValueType evaluate() const;
     constexpr ValueType getLoot();
 };
 
 template <integral ValueType, bool IsTrapped>
-constexpr Treasure<ValueType, IsTrapped> :: Treasure(ValueType value) : value(value){};
+constexpr Treasure<ValueType, IsTrapped> :: Treasure(ValueType value) : value(value), isTrapped(IsTrapped) {};
 
 template <integral ValueType, bool IsTrapped>
 constexpr ValueType Treasure<ValueType, IsTrapped> :: evaluate() const {

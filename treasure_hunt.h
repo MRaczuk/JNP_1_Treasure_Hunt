@@ -5,22 +5,35 @@
 #include "member.h"
 #include "treasure.h"
 
+
 template<class T>
 concept ValidTreasure = requires(T x) {
     { Treasure{x} } -> std::same_as<T>;
 };
 
-template <typename A>
+template <typename T>
 concept DefinesPay =
-        requires(A a) {
-            { a.pay() } -> integral;
+        requires(T adventurer) {
+            { adventurer.pay() } -> integral;
         };
 
+template <typename T>
+concept DefinesGetStrength =
+        requires(T adventurer) {
+            adventurer.getStrength();
+        };
+
+// concept DefinesLoot = ?
 template<typename T>
-concept ValidAdventurer = DefinesPay<T> && requires(T adventurer) {
+concept ValidAdventurer = DefinesPay<T> && requires(T adventurer)
+{
   typename T::strength_t;
   { T::isArmed } -> std::convertible_to<bool>;
+  {[]() constexpr {return T::isArmed; }()};
 };
+
+template<typename T>
+concept ArmedAdventurer = ValidAdventurer<T> && DefinesGetStrength<T>;
 
 template<typename T>
 concept EncounterSide = ValidTreasure<T> || ValidAdventurer<T>;
@@ -32,30 +45,38 @@ template<EncounterSide A, EncounterSide B>
 requires(ValidAdventurer<A> || ValidAdventurer<B>)
 constexpr void run (Encounter<A, B> encounter){
   if constexpr (ValidAdventurer<A> && ValidAdventurer<B>) {
-    if (!encounter.first.isArmed && encounter.second.isArmed) {
-      SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.second.pay)()) > ((decltype((encounter.second.pay)()))encounter.first.pay());
+    if constexpr (!ArmedAdventurer<A> && ArmedAdventurer<B>){
+      SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.second.pay)())> ((decltype((encounter.second.pay)()))encounter.first.pay());
       encounter.second.loot(std::move(taken));
-    } else if (encounter.first.isArmed && !encounter.second.isArmed) {
-      SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.first.pay)()) > ((decltype((encounter.first.pay)()))encounter.second.pay());
+    }
+    else if constexpr (ArmedAdventurer<A> && !ArmedAdventurer<B>){
+      SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.first.pay)())> ((decltype((encounter.first.pay)()))encounter.second.pay());
       encounter.first.loot(std::move(taken));
-    } else if (encounter.first.isArmed && encounter.second.isArmed) {
+    }
+    else if constexpr (ArmedAdventurer<A> && ArmedAdventurer<B>){
       if (encounter.first.getStrength() < encounter.second.getStrength()){
-        SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.second.pay)()) > ((decltype((encounter.second.pay)()))encounter.first.pay());
+        SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.second.pay)())> ((decltype((encounter.second.pay)()))encounter.first.pay());
         encounter.second.loot(std::move(taken));
-      } else if (encounter.first.getStrength() > encounter.second.getStrength()) {
-        SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.first.pay)()) > ((decltype((encounter.first.pay)()))encounter.second.pay());
-        encounter.first.loot(std::move(taken));
       }
+      else if (encounter.first.getStrength() > encounter.second.getStrength()){
+        SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.first.pay)())> ((decltype((encounter.first.pay)()))encounter.second.pay());
+        encounter.first.loot(std::move(taken));
+        }
     }
   }
 
   if constexpr (ValidAdventurer<A> && ValidTreasure<B>){
-    encounter.first.loot(std::move(encounter.second));
+    encounter.first.loot(std::move(encounter.second)); 
   }
 
   if constexpr (ValidAdventurer<B> && ValidTreasure<A>) {
     encounter.second.loot(std::move(encounter.first));
   }
+}
+
+template <typename... Expedition>
+constexpr void expedition(Expedition... encounters) {
+  (run(encounters), ...);
 }
 
 #endif // TREASURE_HUNT_H
