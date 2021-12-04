@@ -6,8 +6,6 @@
 
 #define MAX_EXPEDITIONS 25
 
-using namespace std;
-
 template<integral ValueType, bool IsArmed>
 class Adventurer;
 

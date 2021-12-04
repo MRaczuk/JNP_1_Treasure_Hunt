@@ -3,8 +3,6 @@
 
 #include "bits/stdc++.h"
 
-using namespace std;
-
 template<integral ValueType, bool IsTrapped>
 class Treasure {
 private:
