@@ -1,42 +1,82 @@
-#ifndef TREASURE_H
-#define TREASURE_H
+#ifndef TREASURE_HUNT_H
+#define TREASURE_HUNT_H
 
 #include "bits/stdc++.h"
-using namespace std;
+#include "member.h"
+#include "treasure.h"
 
-template<integral ValueType, bool IsTrapped>
-class Treasure {
 
-private:
-    ValueType value;
-    bool isTrapped_ = IsTrapped;
-
-public:
-    const bool& isTrapped = isTrapped_;
-    constexpr Treasure (ValueType value);
-    constexpr ValueType evaluate() const;
-    constexpr ValueType getLoot();
+template<class T>
+concept ValidTreasure = requires(T x) {
+    { Treasure{x} } -> std::same_as<T>;
 };
 
-template <integral ValueType, bool IsTrapped>
-constexpr Treasure<ValueType, IsTrapped> :: Treasure(ValueType value) : value(value){};
+template <typename T>
+concept DefinesPay =
+        requires(T adventurer) {
+            { adventurer.pay() } -> integral;
+        };
 
-template <integral ValueType, bool IsTrapped>
-constexpr ValueType Treasure<ValueType, IsTrapped> :: evaluate() const {
-    return value;
+template <typename T>
+concept DefinesGetStrength =
+        requires(T adventurer) {
+            adventurer.getStrength();
+        };
+
+// concept DefinesLoot = ?
+template<typename T>
+concept ValidAdventurer = DefinesPay<T> && requires(T adventurer)
+{
+  typename T::strength_t;
+  { T::isArmed } -> std::convertible_to<bool>;
+  {[]() constexpr {return T::isArmed; }()};
+};
+
+template<typename T>
+concept ArmedAdventurer = ValidAdventurer<T> && DefinesGetStrength<T>;
+
+template<typename T>
+concept EncounterSide = ValidTreasure<T> || ValidAdventurer<T>;
+
+template<EncounterSide SideA, EncounterSide SideB>
+using Encounter = pair<SideA &, SideB &>;
+
+template<EncounterSide A, EncounterSide B>
+requires(ValidAdventurer<A> || ValidAdventurer<B>)
+constexpr void run (Encounter<A, B> encounter){
+  if constexpr (ValidAdventurer<A> && ValidAdventurer<B>) {
+    if constexpr (!ArmedAdventurer<A> && ArmedAdventurer<B>){
+      SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.second.pay)())> ((decltype((encounter.second.pay)()))encounter.first.pay());
+      encounter.second.loot(std::move(taken));
+    }
+    else if constexpr (ArmedAdventurer<A> && !ArmedAdventurer<B>){
+      SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.first.pay)())> ((decltype((encounter.first.pay)()))encounter.second.pay());
+      encounter.first.loot(std::move(taken));
+    }
+    else if constexpr (ArmedAdventurer<A> && ArmedAdventurer<B>){
+      if (encounter.first.getStrength() < encounter.second.getStrength()){
+        SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.second.pay)())> ((decltype((encounter.second.pay)()))encounter.first.pay());
+        encounter.second.loot(std::move(taken));
+      }
+      else if (encounter.first.getStrength() > encounter.second.getStrength()){
+        SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.first.pay)())> ((decltype((encounter.first.pay)()))encounter.second.pay());
+        encounter.first.loot(std::move(taken));
+        }
+    }
+  }
+
+  if constexpr (ValidAdventurer<A> && ValidTreasure<B>){
+    encounter.first.loot(std::move(encounter.second)); 
+  }
+
+  if constexpr (ValidAdventurer<B> && ValidTreasure<A>) {
+    encounter.second.loot(std::move(encounter.first));
+  }
 }
 
-template <integral ValueType, bool IsTrapped>
-constexpr ValueType Treasure<ValueType, IsTrapped> :: getLoot() {
-    ValueType out = this->value;
-    this->value = 0;
-    return out;
+template <typename... Expedition>
+constexpr void expedition(Expedition... encounters) {
+  (run(encounters), ...);
 }
 
-template<integral ValueType>
-using SafeTreasure = Treasure<ValueType, false>;
-
-template<integral ValueType>
-using TrappedTreasure = Treasure<ValueType, true>;
-
-#endif // TREASURE_H
+#endif // TREASURE_HUNT_H
