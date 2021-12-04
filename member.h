@@ -84,8 +84,7 @@ public:
 
 private:
   ValueType looted = 0;
-  constexpr strength_t Fib(size_t n) const {
-      if constexpr (n <= 1) return n;
+  static constexpr strength_t Fib(size_t n) {
       int a = 0, b = 1;
       for (int i = 0; i < n; i++){
           a += b;
