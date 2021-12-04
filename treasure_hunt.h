@@ -5,7 +5,6 @@
 #include "member.h"
 #include "treasure.h"
 
-
 template<class T>
 concept ValidTreasure = requires(T x) {
     { Treasure{x} } -> std::same_as<T>;
@@ -23,13 +22,11 @@ concept DefinesGetStrength =
             adventurer.getStrength();
         };
 
-// concept DefinesLoot = ?
 template<typename T>
-concept ValidAdventurer = DefinesPay<T> && requires(T adventurer)
-{
+concept ValidAdventurer = DefinesPay<T> && requires(T adventurer) {
   typename T::strength_t;
   { T::isArmed } -> std::convertible_to<bool>;
-  {[]() constexpr {return T::isArmed; }()};
+  {[]() constexpr { return T::isArmed; }()};
 };
 
 template<typename T>
@@ -43,25 +40,22 @@ using Encounter = pair<SideA &, SideB &>;
 
 template<EncounterSide A, EncounterSide B>
 requires(ValidAdventurer<A> || ValidAdventurer<B>)
-constexpr void run (Encounter<A, B> encounter){
+constexpr void run (Encounter<A, B> encounter) {
   if constexpr (ValidAdventurer<A> && ValidAdventurer<B>) {
-    if constexpr (!ArmedAdventurer<A> && ArmedAdventurer<B>){
-      SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.second.pay)())> ((decltype((encounter.second.pay)()))encounter.first.pay());
+    if constexpr (!ArmedAdventurer<A> && ArmedAdventurer<B>) {
+      SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.second.pay)()) > ((decltype((encounter.second.pay)()))encounter.first.pay());
       encounter.second.loot(std::move(taken));
-    }
-    else if constexpr (ArmedAdventurer<A> && !ArmedAdventurer<B>){
-      SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.first.pay)())> ((decltype((encounter.first.pay)()))encounter.second.pay());
+    } else if constexpr (ArmedAdventurer<A> && !ArmedAdventurer<B>) {
+      SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.first.pay)()) > ((decltype((encounter.first.pay)()))encounter.second.pay());
       encounter.first.loot(std::move(taken));
-    }
-    else if constexpr (ArmedAdventurer<A> && ArmedAdventurer<B>){
+    } else if constexpr (ArmedAdventurer<A> && ArmedAdventurer<B>) {
       if (encounter.first.getStrength() < encounter.second.getStrength()){
-        SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.second.pay)())> ((decltype((encounter.second.pay)()))encounter.first.pay());
+        SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.second.pay)()) > ((decltype((encounter.second.pay)()))encounter.first.pay());
         encounter.second.loot(std::move(taken));
-      }
-      else if (encounter.first.getStrength() > encounter.second.getStrength()){
-        SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.first.pay)())> ((decltype((encounter.first.pay)()))encounter.second.pay());
+      } else if (encounter.first.getStrength() > encounter.second.getStrength()) {
+        SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.first.pay)()) > ((decltype((encounter.first.pay)()))encounter.second.pay());
         encounter.first.loot(std::move(taken));
-        }
+      }
     }
   }
 

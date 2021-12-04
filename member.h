@@ -21,6 +21,7 @@ public:
 
 private:
     ValueType looted = 0;
+
 public:
     static constexpr const bool isArmed = false;
 
@@ -47,6 +48,7 @@ public:
 private:
     strength_t strength;
     ValueType looted = 0;
+
 public:
     static constexpr const bool isArmed = true;
 
@@ -63,8 +65,7 @@ public:
                 strength /= 2;
                 looted += treasure.getLoot();
             }
-        }
-        else {
+        } else {
             looted += treasure.getLoot();
         }
     }
@@ -84,12 +85,15 @@ public:
 
 private:
     ValueType looted = 0;
+
     static constexpr strength_t Fib(size_t n) {
         int a = 0, b = 1;
+
         for (size_t i = 0; i < n; i++){
             a += b;
             swap(a, b);
         }
+
         return a;
     }
 
@@ -103,8 +107,7 @@ public:
     constexpr void loot(Treasure<ValueType, isTrapped>&& treasure) {
         if constexpr (isTrapped) {
             if (strength > 0) looted += treasure.getLoot();
-        }
-        else {
+        } else {
             looted += treasure.getLoot();
         }
     }

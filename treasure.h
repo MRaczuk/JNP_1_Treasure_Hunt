@@ -7,7 +7,6 @@ using namespace std;
 
 template<integral ValueType, bool IsTrapped>
 class Treasure {
-
 private:
     ValueType value;
 
