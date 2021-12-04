@@ -16,6 +16,9 @@ using Explorer = Adventurer<ValueType, false>;
 
 template<integral ValueType>
 class Adventurer<ValueType, false> {
+public:
+  using strength_t = uint32_t;
+
 private:
   ValueType looted = 0;
 public:
@@ -23,8 +26,8 @@ public:
 
   constexpr Adventurer<ValueType, false>() {};
 
-  template<integral TreasureValueType, bool isTrapped>
-  constexpr void loot(Treasure<TreasureValueType, isTrapped>&& treasure) {
+  template<bool isTrapped>
+  constexpr void loot(Treasure<ValueType, isTrapped>&& treasure) {
     if constexpr (!isTrapped)
       looted += treasure.getLoot();
   }
@@ -38,15 +41,18 @@ public:
 
 template<integral ValueType>
 class Adventurer<ValueType, true> {
+public:
+  using strength_t = uint32_t;
+
 private:
-  uint32_t strength;
+  strength_t strength;
   ValueType looted = 0;
 public:
   static constexpr const bool isArmed = true;
 
-  constexpr Adventurer<ValueType, true>(uint32_t strength) : strength(strength) {};
+  constexpr Adventurer<ValueType, true>(strength_t strength) : strength(strength) {};
 
-  constexpr ValueType getStrength() const {
+  constexpr strength_t getStrength() const {
     return strength;
   }
 
@@ -73,10 +79,13 @@ public:
 template<integral ValueType, size_t CompletedExpeditions>
 requires (CompletedExpeditions < MAX_EXPEDITIONS)
 class Veteran {
+public:
+  using strength_t = uint32_t;
+
 private:
   ValueType looted = 0;
-  constexpr uint32_t Fib(size_t n) const{
-      if (n <= 1) return n;
+  constexpr strength_t Fib(size_t n) const {
+      if constexpr (n <= 1) return n;
       int a = 0, b = 1;
       for (int i = 0; i < n; i++){
           a += b;
@@ -84,7 +93,8 @@ private:
       }
       return a;
   }
-  uint32_t strength = Fib(CompletedExpeditions);
+  
+  strength_t strength = Fib(CompletedExpeditions);
 
 public:
   static constexpr const bool isArmed = true;
@@ -100,7 +110,7 @@ public:
       }
   }
 
-  constexpr ValueType getStrength() const {
+  constexpr strength_t getStrength() const {
       return strength;
   }
 
