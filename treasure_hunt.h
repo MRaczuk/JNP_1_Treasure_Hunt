@@ -36,7 +36,24 @@ requires(ValidAdventurer<A> || ValidAdventurer<B>)
 void run (Encounter<A, B> encounter){
     if constexpr (ValidAdventurer<A>){
         if (ValidAdventurer<B>){
-            ;
+            if (!encounter.first.isArmed && encounter.second.isArmed){
+                SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.second.pay)())> ((decltype((encounter.second.pay)()))encounter.first.pay());
+               encounter.second.loot(taken);
+            }
+            else if (encounter.first.isArmed && !encounter.second.isArmed){
+                SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.first.pay)())> ((decltype((encounter.first.pay)()))encounter.second.pay());
+                encounter.first.loot(taken);
+            }
+            else if (encounter.first.isArmed && encounter.second.isArmed){
+                if (encounter.first.getStrength() < encounter.second.getStrength()){
+                    SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.second.pay)())> ((decltype((encounter.second.pay)()))encounter.first.pay());
+                    encounter.second.loot(taken);
+                }
+                else if (encounter.first.getStrength() > encounter.second.getStrength()){
+                    SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.first.pay)())> ((decltype((encounter.first.pay)()))encounter.second.pay());
+                    encounter.first.loot(taken);
+                }
+            }
         }
         if (ValidTreasure<B>){
             encounter.first.loot(encounter.second);
