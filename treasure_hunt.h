@@ -35,7 +35,7 @@ template<EncounterSide A, EncounterSide B>
 requires(ValidAdventurer<A> || ValidAdventurer<B>)
 void run (Encounter<A, B> encounter){
     if constexpr (ValidAdventurer<A>){
-        if (ValidAdventurer<B>){
+        if constexpr (ValidAdventurer<B>){
             if (!encounter.first.isArmed && encounter.second.isArmed){
                 SafeTreasure<auto> taken = SafeTreasure<decltype((encounter.second.pay)())> ((decltype((encounter.second.pay)()))encounter.first.pay());
                 encounter.second.loot(std::move(taken));
@@ -57,6 +57,7 @@ void run (Encounter<A, B> encounter){
         }
         encounter.first.loot(std::move(encounter.second));
     }
+    if constexpr (ValidAdventurer<B>)
     encounter.second.loot(std::move(encounter.first));
 }
 
