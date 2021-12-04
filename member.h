@@ -21,9 +21,9 @@ public:
 
 private:
   ValueType looted = 0;
+
 public:
   static constexpr const bool isArmed = false;
-
   constexpr Adventurer<ValueType, false>() {};
 
   template<bool isTrapped>
@@ -47,9 +47,9 @@ public:
 private:
   strength_t strength;
   ValueType looted = 0;
+
 public:
   static constexpr const bool isArmed = true;
-
   constexpr Adventurer<ValueType, true>(strength_t strength) : strength(strength) {};
 
   constexpr strength_t getStrength() const {
@@ -63,8 +63,7 @@ public:
         strength /= 2;
         looted += treasure.getLoot();
       }
-    }
-    else {
+    } else {
       looted += treasure.getLoot();
     }
   }
@@ -84,6 +83,7 @@ public:
 
 private:
   ValueType looted = 0;
+
   static constexpr strength_t Fib(size_t n) {
       int a = 0, b = 1;
       for (int i = 0; i < n; i++){
@@ -92,7 +92,7 @@ private:
       }
       return a;
   }
-  
+
   strength_t strength = Fib(CompletedExpeditions);
 
 public:
@@ -103,8 +103,7 @@ public:
   constexpr void loot(Treasure<TreasureValueType, isTrapped>&& treasure) {
       if constexpr (isTrapped) {
           if (strength > 0) looted += treasure.getLoot();
-      }
-      else {
+      } else {
           looted += treasure.getLoot();
       }
   }

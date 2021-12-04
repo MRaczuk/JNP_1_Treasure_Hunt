@@ -2,6 +2,7 @@
 #define TREASURE_H
 
 #include "bits/stdc++.h"
+
 using namespace std;
 
 template<integral ValueType, bool IsTrapped>
