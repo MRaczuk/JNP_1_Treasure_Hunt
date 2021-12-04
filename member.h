@@ -99,8 +99,8 @@ public:
     static constexpr const bool isArmed = true;
     constexpr Veteran<ValueType, CompletedExpeditions>() {};
 
-    template<integral TreasureValueType, bool isTrapped>
-    constexpr void loot(Treasure<TreasureValueType, isTrapped>&& treasure) {
+    template<bool isTrapped>
+    constexpr void loot(Treasure<ValueType, isTrapped>&& treasure) {
         if constexpr (isTrapped) {
             if (strength > 0) looted += treasure.getLoot();
         }
