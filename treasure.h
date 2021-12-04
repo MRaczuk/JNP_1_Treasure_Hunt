@@ -16,24 +16,24 @@ public:
 };
 
 template <std::integral ValueType, bool IsTrapped>
-constexpr Treasure<ValueType, IsTrapped> :: Treasure(ValueType value) : value(value), isTrapped(IsTrapped) {};
+constexpr Treasure<ValueType, IsTrapped> :: Treasure(ValueType value) : value(value) {};
 
-template <integral ValueType, bool IsTrapped>
+template <std::integral ValueType, bool IsTrapped>
 constexpr ValueType Treasure<ValueType, IsTrapped> :: evaluate() const {
     return value;
 }
 
-template <integral ValueType, bool IsTrapped>
+template <std::integral ValueType, bool IsTrapped>
 constexpr ValueType Treasure<ValueType, IsTrapped> :: getLoot() {
     ValueType out = this->value;
     this->value = 0;
     return out;
 }
 
-template<integral ValueType>
+template<std::integral ValueType>
 using SafeTreasure = Treasure<ValueType, false>;
 
-template<integral ValueType>
+template<std::integral ValueType>
 using TrappedTreasure = Treasure<ValueType, true>;
 
 #endif // TREASURE_H
