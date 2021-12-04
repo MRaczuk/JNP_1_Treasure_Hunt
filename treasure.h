@@ -8,7 +8,7 @@ template<integral ValueType, bool IsTrapped>
 class Treasure {
 
 private:
-    ValueType value;]
+    ValueType value;
 
 public:
     const bool isTrapped;
