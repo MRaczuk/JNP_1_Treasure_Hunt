@@ -1,4 +1,4 @@
-ifndef TREASURE_HUNT_H
+#ifndef TREASURE_HUNT_H
 #define TREASURE_HUNT_H
 
 #include "bits/stdc++.h"
@@ -11,9 +11,9 @@ template<class T>
     { Treasure{x} } -> std::same_as<T>;
 };
 
-template <typename A>
+template <typename T>
 concept DefinesPay =
-        requires(A a) {
+        requires(T a) {
             { a.pay() } -> integral;
         };
 
@@ -23,6 +23,7 @@ concept ValidAdventurer = DefinesPay<T> && requires(T adventurer)
         {
     typename T::strength_t;
     { T::isArmed } -> std::convertible_to<bool>;
+            {[]() constexpr {return T::isArmed; }()};
         };
 
 template<typename T>
@@ -64,5 +65,9 @@ constexpr void run (Encounter<A, B> encounter){
     }
 }
 
+template <typename... Expedition>
+constexpr void expedition(Expedition... encounters) {
+    (run(encounters), ...);
+}
 
 #endif // TREASURE_HUNT_H

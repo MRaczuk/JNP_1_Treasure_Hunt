@@ -1,4 +1,4 @@
-ifndef TREASURE_H
+#ifndef TREASURE_H
 #define TREASURE_H
 
 #include "bits/stdc++.h"
